@@ -89,29 +89,24 @@ void clear() {
 	printf("%c[H", ESC) ;
 }
 
-void updatepos(*x, *y, int8_t vx, int8_t vy) {
-	*x += vx ;
-	*y += vy ;
+void resettext() {
+    printf("\033[0m"); // Reset text attributes
 }
 
-void drawball(int8_t x, int8_t y) {
-	gotoxy(y,x) ;
-	printf("o") ;
-}
-
-void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, char *title, uint8_t style) {
+// Function to draw a window in the terminal
+void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, const char *title, uint8_t style) {
 
 	clrscr() ;
 	resetbgcolor() ;
 
-	char start = "0";
-	char end = "0";
-	char vert = "0";
-	char hor = "0";
-	char nw = "0";
-	char ne = "0";
-	char sw = "0";
-	char se = "0";
+	char start ;
+	char end ;
+	char vert ;
+	char hor ;
+	char nw ;
+	char ne ;
+	char sw ;
+	char se ;
 
 	if (style == 1) {
 		start = start1 ;
@@ -134,156 +129,31 @@ void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, char *title, uint8_t
 			se = se2 ;
 	}
 
-	gotoxy(y1, x1) ;
-	printf("%c", nw) ;
-	printf("%c", start) ;
+	int width = x2 - x1 + 1;
+	int height = y2 - y1 + 1;
+	int title_length = strlen(title);
 
-	inverse(07) ;
-	printf(" ") ;
-
-	int len = 0 ;
-	while (title[len] != '\0') {
-			printf("%c", title[len]) ;
-			len++ ;
-	} ;
-
-	printf(" ") ;
-	inverse(27) ;
-
-	printf("%c", end) ;
-
-	int x = 0 ;
-
-	uint8_t length = strlen(title) ;
-
-	while (x < (x2 - length - 2 - 4)) {
-		printf("%c", hor);
-		x++ ;
-	} ;
-
+	    // Top border
+	gotoxy(y1, x1);
+	printf("%c", nw);
+	for (int i = 0; i < width - 2; i++) printf("%c", hor);
 	printf("%c", ne);
 
-	int y = 2 ;
+	    // Title in the top border
+	gotoxy(y1, x1 + (width - title_length) / 2);
+	printf("%s", title);
 
-	while (y < y2) {
-		gotoxy(y, x1) ;
-		printf("%c", vert) ;
-		y++ ;
+	    // Side borders
+	for (int i = 1; i < height - 1; i++) {
+		gotoxy(y1 + i, x1);
+	    printf("%c", vert);
+	    gotoxy(y1 + i, x2);
+	    printf("%c", vert);
+	    }
+
+	    // Bottom border
+	gotoxy(y2, x1);
+	printf("%c",sw);
+	for (int i = 0; i < width - 2; i++) printf("%c", hor);
+	printf("%c",se);
 	}
-
-	gotoxy(y2, x1) ;
-
-	printf("%c", sw) ;
-
-	int z = 0;
-	while (z < x2 -1) {
-		printf("%c", hor) ;
-		z++ ;
-	}
-	int k = 2;
-		while (k < (y2 - 3)) {
-			gotoxy(k, x2) ;
-			printf("%c", vert) ;
-			k++ ;
-		}
-
-	gotoxy(y2, x2) ;
-	printf("%c", se) ;
-
-}
-
-void graphic() {
-	clrscr() ;
-	clear() ;
-
-	typedef struct {
-		int8_t x ;
-		int8_t vx ;
-		int8_t y ;
-		int8_t vy ;
-	} Ball;
-
-	printf("%c", nw2) ;
-
-	int i = 2 ;
-	while (i <= 60) {
-		printf("%c", hor2) ;
-		i++ ;
-	}
-
-	printf("%c", ne2) ;
-
-	int y = 2;
-
-	while (y <= 20) {
-		gotoxy(y, 1) ;
-		printf("%c", vert2) ;
-		y++ ;
-	}
-
-	gotoxy(y,1) ;
-
-	printf("%c", sw2) ;
-
-	int x = 2 ;
-
-	while (x <= 60) {
-		printf("%c", hor2) ;
-		x++ ;
-	}
-
-	printf("%c", se2) ;
-
-	int z = 2 ;
-
-	while (z < 18) {
-		gotoxy(z, 61) ;
-		printf("%c", vert2) ;
-		z++ ;
-	}
-
-	gotoxy(10,27) ;
-
-	int hits = 0 ;
-
-	printf("Hits: %d", hits) ;
-
-	gotoxy(9,26) ;
-
-	printf("%c", nw1) ;
-
-	int i1 = 0 ;
-
-	while (i1 <= 6) {
-		printf("%c", hor1) ;
-		i1++ ;
-	}
-
-	printf("%c", ne1) ;
-
-	gotoxy(10,26) ;
-	printf("%c", vert1) ;
-	gotoxy(10,34) ;
-	printf("%c", vert1) ;
-
-	gotoxy(11,26) ;
-
-	printf("%c", sw1) ;
-
-	int i2 = 0;
-
-	while (i2 <= 6) {
-			printf("%c", hor1) ;
-			i2++ ;
-		}
-
-	printf("%c", se1) ;
-
-	Ball ball ;
-		ball.x = 2 ;
-		ball.y = 2 ;
-		ball.vx = 1 ;
-		ball.vy = 1 ;
-
-
-}
