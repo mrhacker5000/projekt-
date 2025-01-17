@@ -66,8 +66,7 @@ void window(int x1, int y1, int x2, int y2, const char *title, int style) {
 }
 
 // Main function for creating a mockup GUI with one window
-int main() {
-	uart_init(9600 );
+void drawdifficulty() {
 
     // Clear the screen
     clrscr();
@@ -101,7 +100,4 @@ int main() {
         // Reset text attributes
         resettext();
 
-        // Reset cursor position for clean exit
-        gotoxy(1, 14);
-        return 0;
     }
