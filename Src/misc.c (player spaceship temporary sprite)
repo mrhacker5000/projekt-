@@ -14,7 +14,7 @@ void gotoxy(int x, int y) {
     // ANSI escape sequence to move the cursor
     printf("\033[%d;%dH", y, x);
 }
-void spawn_spaceship_sprite() {
+void spawn_spaceship_sprite(uint_8 y-pos) {
 
 // function for drawing spaceship-sprite
 
