@@ -1,0 +1,109 @@
+/*
+ * misc.c
+ *
+ *  Created on: 17. jan. 2025
+ *      Author: Bruger
+ */
+
+
+#include <stdio.h>
+#include "misc.h"
+#include "ansi.h"
+// Define the screen size and sprite size
+#define SCREEN_WIDTH 80
+#define SPRITE_WIDTH 9
+
+void gotoxy(uint8_t x, uint8_t y) {
+	printf("\033[%d;%dH", y + 1, x + 1);
+}
+
+
+void clear_sprite(uint8_t x_pos, uint8_t y_pos) {
+    for (uint8_t current_row = 0; current_row < 4; current_row++) {
+        for (uint8_t current_column = 0; current_column < 9; current_column++) {
+            gotoxy(x_pos + current_column, y_pos + current_row);
+            printf(" ");
+        }
+    }
+}
+void draw_astroid_sprite(char buffer[SCREEN_WIDTH][SCREEN_WIDTH], uint8_t x_pos, uint8_t y_pos) {
+	uint8_t astroid_color[][9] = {
+			{0,7,8,7,7,0,0,11,11},
+			{8,7,7,8,7,7,7,11,11},
+			{7,8,7,7,7,7,0,11,11},
+			{8,7,7,7,8,8,0,11,11},
+	};
+
+	uint8_t astroid_char[][9] = {
+			{220,220,219,219,220,0,0,42,42},
+			{220,219,219,219,219,219,220,42,42},
+			{219,219,219,219,219,223,0,42,42},
+			{223,219,219,219,223,223,223,42,42},
+	};
+
+
+	//drawing sprite
+	for (uint8_t current_row = 0; current_row < 4; current_row++) {
+	for (uint8_t current_column = 0; current_column < 9; current_column++) {
+		buffer[y_pos + current_row][x_pos + current_column] = astroid_char[current_row][current_column];
+	  }
+   }
+}
+
+-----------------------------------------------------------------------------------------------------------------------
+main
+
+#include "stm32f30x_conf.h"  // STM32 config
+#include "30010_io.h"         // Input/output library for this course
+#include <stdio.h>
+#include <stdint.h> // For uint8_t
+#include <string.h> // For strlen
+#include "misc.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "ansi.h"
+
+
+void clrscr() {
+	uart_init(9600 );
+    printf("\033[2J"); // ANSI escape sequence to clear the screen
+    printf("\033[H");  // Move cursor to home position (top-left corner).
+}
+void draw_astroid_sprite(char buffer[80][80], uint8_t x_pos, uint8_t y_pos);
+void clear_sprite(uint8_t x_pos, uint8_t y_pos);
+void gotoxy(uint8_t x, uint8_t y);
+void fgcolor(uint8_t color);
+
+void print_buffer(char buffer[80][80], uint8_t width, uint8_t height) {
+	for (uint8_t row = 0; row < height; row++) {
+		gotoxy(0, row);
+		for (uint8_t col = 0; col < width; col++) {
+			if (buffer[row][col] == 0) {
+				printf(" ");
+			} else {
+				printf("%c", buffer[row][col]);
+			}
+		}
+	}
+}
+int main() {
+	uart_init(9600 );
+	clrscr();
+    hide_cursor();
+	const uint8_t y_pos = 10;
+	char buffer[80][80]={0};
+
+	// Loop to move the sprite from right to left
+	for (uint8_t x_pos = 80; x_pos-- > 0;) {
+	// Clear buffer
+	for (uint8_t row = 0; row < 80; row++) {
+		for (uint8_t col = 0; col < 80; col++) {
+			buffer[row][col] = 0;
+		}
+	}
+ draw_astroid_sprite(buffer, x_pos, y_pos); // Draw the sprite at the new position
+ print_buffer(buffer, 80, y_pos + 4); // Print the entire buffer in one go
+	    }
+
+	    return 0;
+	}
