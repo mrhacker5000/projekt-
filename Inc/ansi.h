@@ -16,6 +16,15 @@
 /* Exported macro --------------------------------------*/
 /* Exported functions ----------------------------------*/
 
+typedef struct {
+		int8_t x ;
+		int8_t vx ;
+		int8_t y ;
+		int8_t vy ;
+		int hits ;
+	} Ball;
+
+
 void fgcolor (uint8_t foreground) ;
 void bgcolor (uint8_t background) ;
 void color (uint8_t foreground, uint8_t background) ;
@@ -26,9 +35,15 @@ void inverse(uint8_t on) ;
 void clrscr() ;
 void clreol() ;
 void clear() ;
-void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, char *title, uint8_t style) ;
+void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, const char *title, uint8_t style) ;
 void drawball(int8_t x, int8_t y) ;
+void updatepos(int8_t *x, int8_t *y, int8_t vx, int8_t vy) ;
 void graphic() ;
+void check_collision(Ball *ball) ;
+void clearball(int8_t prev_y, int8_t prev_x) ;
+void drawTitle() ;
+void hidecursor() ;
+void gamewindow() ;
 
 #define start1 180
 #define start2 185
