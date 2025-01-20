@@ -26,9 +26,23 @@ void init_player(player *p1) {
 
 
 
-void drawplayer(player p1) {
+void drawplayer(player p1, int input) {
 	gotoxy(p1.y, p1.x) ;
-	printf(">") ;
+	char arrow;
+	char *p = &arrow;
+	if(input == 0x02) {
+		*p -> "v" ;
+		}
+	else if (input == 0x01) {
+		*p -> "^" ;
+		}
+	else if(input == 0x04) {
+		*p -> "<" ;
+		}
+	else if (input == 0x08) {
+		*p -> ">" ;
+		}
+	printf("%c", arrow);
 }
 
 void updateplayer(player *p1, int input) {
