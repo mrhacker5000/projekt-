@@ -1,5 +1,6 @@
 #define ESC 0x1B
 #include "ansi.h"
+#include "string.h"
 
 void fgcolor(uint8_t foreground) {
 /*  Value      foreground     Value     foreground
@@ -89,18 +90,80 @@ void clear() {
 	printf("%c[H", ESC) ;
 }
 
-void resettext() {
-    printf("\033[0m"); // Reset text attributes
+void updatepos(int8_t *x, int8_t *y, int8_t vx, int8_t vy) {
+	*x += vx ;
+	*y += vy ;
 }
 
-// Function to draw a window in the terminal
+void drawball(int8_t x, int8_t y) {
+	gotoxy(y,x) ;
+	printf("o") ;
+}
+
+void clearball(int8_t prev_y, int8_t prev_x) {
+    gotoxy(prev_y, prev_x); // Move the cursor to the previous position
+    printf(" ");            // Print a space to clear the old ball
+}
+
+void hidecursor() {
+	printf("\e[?25l") ;
+}
+
+void check_collision(Ball *ball) {
+	// Check collision with vertical walls (vert2)
+	    if (ball->x <= 2 || ball->x >= 17) { // Assuming wall boundaries at x = 2 and x = 60
+	        ball->vx = -ball->vx; // Invert horizontal velocity
+	        ball->hits = ball->hits +1 ;
+	    }
+
+	    // Check collision with horizontal walls (hor2)
+	    if (ball->y <= 2 || ball->y >= 60) { // Assuming wall boundaries at y = 2 and y = 20
+	        ball->vy = -ball->vy; // Invert vertical velocity
+	        ball->hits = ball->hits +1 ;
+	    }
+}
+
+void updatehitbox(int hits) {
+	gotoxy(10,26) ;
+	printf("Hits: %d", hits) ;
+
+		gotoxy(9,25) ;
+
+		printf("%c", nw1) ;
+
+		int i1 = 0 ;
+
+		while (i1 <= 8) {
+			printf("%c", hor1) ;
+			i1++ ;
+		}
+
+		printf("%c", ne1) ;
+
+		gotoxy(10,25) ;
+		printf("%c", vert1) ;
+		gotoxy(10,35) ;
+		printf("%c", vert1) ;
+
+		gotoxy(11,25) ;
+
+		printf("%c", sw1) ;
+
+		int i2 = 0;
+
+		while (i2 <= 8) {
+				printf("%c", hor1) ;
+				i2++ ;
+			}
+
+		printf("%c", se1) ;
+}
+
 void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, const char *title, uint8_t style) {
 
 	clrscr() ;
 	resetbgcolor() ;
 
-	char start ;
-	char end ;
 	char vert ;
 	char hor ;
 	char nw ;
@@ -109,8 +172,6 @@ void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, const char *title, u
 	char se ;
 
 	if (style == 1) {
-		start = start1 ;
-		end = end1 ;
 		vert = vert1 ;
 		hor = hor1 ;
 		nw = nw1 ;
@@ -119,8 +180,6 @@ void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, const char *title, u
 		se = se1 ;
 	}
 		else {
-			start = start2 ;
-			end = end2 ;
 			vert = vert2 ;
 			hor = hor2 ;
 			nw = nw2 ;
@@ -157,3 +216,69 @@ void window(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, const char *title, u
 	for (int i = 0; i < width - 2; i++) printf("%c", hor);
 	printf("%c",se);
 	}
+
+void graphic() {
+	clrscr() ;
+	clear() ;
+
+	Ball ball ;
+			ball.x = 3 ;
+			ball.y = 3 ;
+			ball.vx = 1 ;
+			ball.vy = 1 ;
+			ball.hits = 0 ;
+
+	printf("%c", nw2) ;
+
+	int i = 2 ;
+	while (i <= 60) {
+		printf("%c", hor2) ;
+		i++ ;
+	}
+
+	printf("%c", ne2) ;
+
+	int y = 2;
+
+	while (y <= 17) {
+		gotoxy(y, 1) ;
+		printf("%c", vert2) ;
+		y++ ;
+	}
+
+	gotoxy(y,1) ;
+
+	printf("%c", sw2) ;
+
+	int x = 2 ;
+
+	while (x <= 60) {
+		printf("%c", hor2) ;
+		x++ ;
+	}
+
+	printf("%c", se2) ;
+
+	int z = 2 ;
+
+	while (z < 18) {
+		gotoxy(z, 61) ;
+		printf("%c", vert2) ;
+		z++ ;
+	}
+
+	updatehitbox(ball.hits) ;
+
+	while (1) {
+		clearball(ball.x, ball.y) ;
+		updatepos(&ball.x, &ball.y, ball.vx, ball.vy) ;
+		check_collision(&ball) ;
+		drawball(ball.y, ball.x) ;
+		gotoxy(10,27);
+		updatehitbox(ball.hits);
+	}
+}
+
+void gamewindow() {
+	window(1, 1, 120, 41, "", 2) ;
+}
