@@ -37,8 +37,6 @@ int8_t readjoystick() {
 	    GPIOB->PUPDR &= ~(0x00000003 << (0 * 2));
 	    GPIOB->PUPDR |= (0x00000002 << (0 * 2));
 
-	    while (1) {
-
 	    // Read joystick inputs
 	    uint16_t right = GPIOC->IDR & (0x0001 << 0);  // Read PC0
 	    uint16_t up = GPIOA->IDR & (0x0001 << 4);     // Read PA4
@@ -48,34 +46,18 @@ int8_t readjoystick() {
 
 	    if (right) {
 	           val = 0x08;
-	           clrscr();
-	           clear();
-	           printf("Right");
 	       } else if (left) {
-	           val = 0x04;
-	           clrscr();
-	           clear();
-	           printf("Left");
+	    	   val = 0x04;
 	       } else if (center) {
 	           val = 0x10;
-	           clrscr();
-	           clear();
-	           printf("Center");
 	       } else if (up) {
 	           val = 0x01;
-	           clrscr();
-	           clear();
-	           printf("Up");
 	       } else if (down) {
 	           val = 0x02;
-	           clrscr();
-	           clear();
-	           printf("Down");
 	       }
 
 	       return val; // Return the value corresponding to the joystick input
 	   }
-}
 
 void setled() {
     // Call readjoystick() and store the value
@@ -107,50 +89,46 @@ void setled() {
 
     // Control the LED on PA9 based on joystick input
     if (joystick == 0x02) {
-    	GPIOA->ODR &= ~(0x0001 << 9);
-    	GPIOB->ODR &= ~(0x0001 << 4);
-    	GPIOC->ODR &= ~(0x0001 << 7);
+    	GPIOA->ODR |= (0x0001 << 9);
+    	GPIOB->ODR |= (0x0001 << 4);
+    	GPIOC->ODR |= (0x0001 << 7);
 
-        GPIOA->ODR |= (0x0001 << 9);  // Turn on LED (Set PA9 high)
+        GPIOA->ODR &= ~(0x0001 << 9);  // Turn on LED (Set PA9 high)
     }
     else if (joystick == 0x01) {
-    	GPIOA->ODR &= ~(0x0001 << 9);
-    	GPIOB->ODR &= ~(0x0001 << 4);
-    	GPIOC->ODR &= ~(0x0001 << 7);
-
+    	GPIOA->ODR |= (0x0001 << 9);
+    	GPIOB->ODR |= (0x0001 << 4);
     	GPIOC->ODR |= (0x0001 << 7);
+
+    	GPIOC->ODR &= ~(0x0001 << 7);
     }
     else if (joystick == 0x08) {
-    	GPIOA->ODR &= ~(0x0001 << 9);
-    	GPIOB->ODR &= ~(0x0001 << 4);
-    	GPIOC->ODR &= ~(0x0001 << 7);
-
+    	GPIOA->ODR |= (0x0001 << 9);
     	GPIOB->ODR |= (0x0001 << 4);
+    	GPIOC->ODR |= (0x0001 << 7);
+
+    	GPIOB->ODR &= ~(0x0001 << 4);
     }
     else if (joystick == 0x04) {
-    	GPIOA->ODR &= ~(0x0001 << 9);
-        GPIOB->ODR &= ~(0x0001 << 4);
-        GPIOC->ODR &= ~(0x0001 << 7);
-
+    	GPIOA->ODR |= (0x0001 << 9);
         GPIOB->ODR |= (0x0001 << 4);
         GPIOC->ODR |= (0x0001 << 7);
+
+        GPIOB->ODR &= ~(0x0001 << 4);
+        GPIOC->ODR &= ~(0x0001 << 7);
     }
     else if (joystick == 0x10) {
-        GPIOA->ODR &= ~(0x0001 << 9);
-        GPIOB->ODR &= ~(0x0001 << 4);
-        GPIOC->ODR &= ~(0x0001 << 7);
-
+        GPIOA->ODR |= (0x0001 << 9);
         GPIOB->ODR |= (0x0001 << 4);
         GPIOC->ODR |= (0x0001 << 7);
-        GPIOA->ODR |= (0x0001 << 9);
+
+        GPIOB->ODR &= ~(0x0001 << 4);
+        GPIOC->ODR &= ~(0x0001 << 7);
+        GPIOA->ODR &= ~(0x0001 << 9);
         }
     else {
-    	GPIOA->ODR &= ~(0x0001 << 9);
-    	GPIOB->ODR &= ~(0x0001 << 4);
-    	GPIOC->ODR &= ~(0x0001 << 7);
+    	GPIOA->ODR |= (0x0001 << 9);
+    	GPIOB->ODR |= (0x0001 << 4);
+    	GPIOC->ODR |= (0x0001 << 7);
     }
 }
-
-
-
-
