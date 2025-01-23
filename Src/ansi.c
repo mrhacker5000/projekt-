@@ -109,6 +109,19 @@ void hidecursor() {
 	printf("\e[?25l") ;
 }
 
+void clear_terminal() {
+    printf("\033[2J"); // Clear the terminal
+    printf("\033[H");  // Move cursor to the top-left corner
+}
+
+void hide_cursor() {
+	printf("\e[?25l") ;
+}
+
+void set_terminal_size(int rows, int cols) {
+    printf("\033[8;%d;%dt", rows, cols);
+}
+
 void check_collision(Ball *ball) {
 	// Check collision with vertical walls (vert2)
 	    if (ball->x <= 2 || ball->x >= 17) { // Assuming wall boundaries at x = 2 and x = 60
