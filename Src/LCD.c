@@ -21,27 +21,6 @@ void LCD_initgame(uint8_t* LCD){
 	add_string(LCD, "Score: 0", 0, 1);
 }
 
-
-void set_score(uint8_t* LCD, uint8_t amount){
-
-	char* input = (char*) malloc(20*sizeof(char));
-	sprintf(input, "%d", amount);
-
-	LCDclrline(LCD, 1);
-
-
-	int length = strlen(input);
-
-	char string[20] = "Score: ";
-
-	for(int i =0; i < length; i++){
-		string[i+7] = input[i];
-	}
-	add_string(LCD, string,0,1 );
-
-	free(input);
-}
-
 void hp(uint8_t* LCD, uint8_t amount){
 
 	switch(amount){
