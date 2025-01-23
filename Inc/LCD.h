@@ -22,7 +22,7 @@ void LCD_initgame(uint8_t* LCD) ;
 
 void add_string(uint8_t* LCD, char* text, uint8_t x, uint8_t y) ;
 
-void set_score(uint8_t* LCD,  uint8_t amount) ;
+void LCD_score(uint8_t* LCD,  uint32_t amount) ;
 
 void hp(uint8_t* LCD, uint8_t amount) ;
 
