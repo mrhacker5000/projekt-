@@ -81,6 +81,17 @@ void add_string(uint8_t* LCD, char* text, uint8_t x, uint8_t y){
 	lcd_push_buffer(LCD);
 }
 
+void LCD_score(uint8_t *LCD, uint32_t amount) {
+    char printer[12];
+    sprintf(printer, "%lu", amount);
+
+    LCDclrline(LCD, 1) ;
+    add_string(LCD, "Score: ", 0, 1);
+
+
+    add_string(LCD, printer, 0x20, 1) ;
+}
+
 void LCDclrline(uint8_t *LCD,uint8_t row){
 
 	for(int i= 0; i < 128; i++){
