@@ -16,7 +16,11 @@
 void gotoxy(uint8_t x, uint8_t y) {
 	printf("\033[%d;%dH", y + 1, x + 1);
 }
-
+void clrscr() {
+	uart_init(115200 );
+    printf("\033[2J"); // ANSI escape sequence to clear the screen
+    printf("\033[H");  // Move cursor to home position (top-left corner).
+}
 
 void clear_sprite(uint8_t x_pos, uint8_t y_pos) {
     for (uint8_t current_row = 0; current_row < 4; current_row++) {
@@ -68,49 +72,71 @@ void print_buffer(char buffer[80][80], uint8_t color_buffer[80][80], uint8_t wid
 main
 
 #include "stm32f30x_conf.h"  // STM32 config
-#include "30010_io.h"         // Input/output library for this course
-#include <stdio.h>
-#include <stdint.h> // For uint8_t
-#include <string.h> // For strlen
-#include "misc.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "ansi.h"
+#include "30010_io.h"        // Input/output library for this course
+#include <stdint.h>          // For uint8_t
+#include "misc.h"            // Miscellaneous functions
+#include "ansi.h"            // ANSI escape sequences
 
 
-void clrscr() {
-	uart_init(115200 );
-    printf("\033[2J"); // ANSI escape sequence to clear the screen
-    printf("\033[H");  // Move cursor to home position (top-left corner).
-}
-void draw_astroid_sprite(char buffer[80][80],uint8_t color_buffer[80][80], uint8_t x_pos, uint8_t y_pos);
-void clear_sprite(uint8_t x_pos, uint8_t y_pos);
-void gotoxy(uint8_t x, uint8_t y);
-void fgcolor(uint8_t color);
-void clear_sprite(uint8_t x_pos, uint8_t y_pos);
+#define SCREEN_WIDTH 180
+#define SCREEN_HEIGHT 40
+#define SPRITE_WIDTH 9
+#define SPRITE_HEIGHT 4
+#define NUM_ASTEROIDS 5 // Number of asteroids
 
 int main() {
-	uart_init(115200 );
-	clrscr();
+    uart_init(115200);
+    clrscr();
     hide_cursor();
-	const uint8_t y_pos = 10;
-	char buffer[80][80]={0};
-	uint8_t color_buffer[80][80] = {0}; // Buffer for colors
 
-	// Loop to move the sprite from right to left
-	for (uint8_t x_pos = 80; x_pos-- > 0; x_pos -= 2) {
-	// Clear buffer
-	for (uint8_t row = 0; row < 80; row++) {
-		for (uint8_t col = 0; col < 80; col++) {
-			buffer[row][col] = 0;
-			color_buffer[row][col] = 0;
-		}
-	}
- draw_astroid_sprite(buffer, color_buffer, x_pos, y_pos); // Draw the sprite at the new position
- print_buffer(buffer,color_buffer, 80, y_pos + 4); // Print the entire buffer in one go
+    // Asteroid positions and directions
+    uint8_t x_pos[NUM_ASTEROIDS];
+    uint8_t y_pos[NUM_ASTEROIDS];
+    int8_t y_direction[NUM_ASTEROIDS];
 
-	    }
+    // Buffers for drawing and printing
+    char buffer[SCREEN_WIDTH][SCREEN_HEIGHT] = {0};
+    uint8_t color_buffer[SCREEN_WIDTH][SCREEN_HEIGHT] = {0};
 
-	    return 0;
-	}
+    // Initialize positions and directions
+    for (uint8_t i = 0; i < NUM_ASTEROIDS; i++) {
+        x_pos[i] = SCREEN_WIDTH - (i * 15);  // Stagger starting x-positions
+        y_pos[i] = 5 + (i * 6);              // Stagger starting y-positions
+        y_direction[i] = (i % 2 == 0) ? 1 : -1; // Alternate directions
+    }
 
+    // Animation loop
+    while (1) {
+        // Clear buffers
+        memset(buffer, 0, sizeof(buffer));
+        memset(color_buffer, 0, sizeof(color_buffer));
+
+        // Update positions and directions
+        for (uint8_t i = 0; i < NUM_ASTEROIDS; i++) {
+            x_pos[i]--; // Move left
+            if (x_pos[i] + SPRITE_WIDTH == 0) {
+                // Reset asteroid to right side when it goes off-screen
+                x_pos[i] = SCREEN_WIDTH - 1;
+            }
+
+            // Update vertical position for "floating" effect
+            y_pos[i] += y_direction[i];
+            if (y_pos[i] <= 0 || y_pos[i] >= SCREEN_HEIGHT - SPRITE_HEIGHT) {
+                y_direction[i] *= -1; // Reverse direction when hitting top or bottom
+            }
+        }
+
+        // Draw all asteroids at their new positions
+        for (uint8_t i = 0; i < NUM_ASTEROIDS; i++) {
+            draw_astroid_sprite(buffer, color_buffer, x_pos[i], y_pos[i]);
+        }
+
+        // Print buffer to screen
+        print_buffer(buffer, color_buffer, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        // Add delay for smoother movement
+        for (volatile int delay = 0; delay < 10000; delay++);
+    }
+
+    return 0;
+}
