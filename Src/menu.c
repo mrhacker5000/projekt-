@@ -1,4 +1,4 @@
-#include "header_file.h"
+#include "menu.h"
 
 void initialize_menu() {
 	set_terminal_size(41, 120);
