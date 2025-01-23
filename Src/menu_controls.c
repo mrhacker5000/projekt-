@@ -1,4 +1,4 @@
-#include "header_file.h"
+#include "menu.h"
 
 void title_screen_controls() {
 	while (1) {
