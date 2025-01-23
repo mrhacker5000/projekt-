@@ -1,4 +1,4 @@
-#include "header_file.h"
+#include "menu.h"
 
 void draw_title() { // Prints title with alien heads
 	hide_cursor();
