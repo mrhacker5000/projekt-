@@ -59,12 +59,9 @@ int8_t readjoystick() {
 	       return val; // Return the value corresponding to the joystick input
 	   }
 
-void setled() {
-    // Call readjoystick() and store the value
-    int8_t joystick = readjoystick();
-
-    // Enable the clock for GPIOA
-    RCC->AHBENR |= RCC_AHBPeriph_GPIOA;
+void setled(player p1) {
+    // Enable the clock
+	RCC->AHBENR |= RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC;
 
     // Configure PA9 (Blue) as output
     GPIOA->OSPEEDR &= ~(0x00000003 << (9 * 2)); // Clear speed register
@@ -88,47 +85,35 @@ void setled() {
     GPIOB->MODER |= (0x00000001 << (4 * 2));   // Set PB49 as output
 
     // Control the LED on PA9 based on joystick input
-    if (joystick == 0x02) {
+    if (p1.health == 3) {
     	GPIOA->ODR |= (0x0001 << 9);
     	GPIOB->ODR |= (0x0001 << 4);
     	GPIOC->ODR |= (0x0001 << 7);
 
-        GPIOA->ODR &= ~(0x0001 << 9);  // Turn on LED (Set PA9 high)
+        GPIOC->ODR &= ~(0x0001 << 7);  // Turn on LED (Set PA9 high)
     }
-    else if (joystick == 0x01) {
+    else if (p1.health == 2) {
     	GPIOA->ODR |= (0x0001 << 9);
     	GPIOB->ODR |= (0x0001 << 4);
     	GPIOC->ODR |= (0x0001 << 7);
 
     	GPIOC->ODR &= ~(0x0001 << 7);
+    	GPIOB->ODR &= ~(0x0001 << 4);
     }
-    else if (joystick == 0x08) {
+    else if (p1.health == 1) {
     	GPIOA->ODR |= (0x0001 << 9);
     	GPIOB->ODR |= (0x0001 << 4);
     	GPIOC->ODR |= (0x0001 << 7);
 
     	GPIOB->ODR &= ~(0x0001 << 4);
     }
-    else if (joystick == 0x04) {
-    	GPIOA->ODR |= (0x0001 << 9);
-        GPIOB->ODR |= (0x0001 << 4);
-        GPIOC->ODR |= (0x0001 << 7);
-
-        GPIOB->ODR &= ~(0x0001 << 4);
-        GPIOC->ODR &= ~(0x0001 << 7);
-    }
-    else if (joystick == 0x10) {
-        GPIOA->ODR |= (0x0001 << 9);
-        GPIOB->ODR |= (0x0001 << 4);
-        GPIOC->ODR |= (0x0001 << 7);
-
-        GPIOB->ODR &= ~(0x0001 << 4);
-        GPIOC->ODR &= ~(0x0001 << 7);
-        GPIOA->ODR &= ~(0x0001 << 9);
-        }
     else {
     	GPIOA->ODR |= (0x0001 << 9);
     	GPIOB->ODR |= (0x0001 << 4);
     	GPIOC->ODR |= (0x0001 << 7);
     }
 }
+
+
+
+
