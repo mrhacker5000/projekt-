@@ -13,8 +13,9 @@
 #include "stdint.h"
 #include "stdio.h"
 #include "30010_io.h"
+#include "player.h"
 
 int8_t readjoystick() ;
-void setled() ;
+void setled(player p1) ;
 
 #endif /* GPIO_H_ */
