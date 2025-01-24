@@ -22,16 +22,16 @@ void draw_boss_key() { // Prints boss key
 	printf("                                                                                  '-......-'");
 }
 
-void boss_key_function() {
+void boss_key_function() { 
 		while(1) {
 	static int boss_key_count = 0;
 
 	int boss_key_value = uart_get_char();
 
-	if (boss_key_value == 0x1B) {
+	if (boss_key_value == 0x1B) { // Funktion der tjekker om 'ESCAPE' bliver trykket
 		boss_key_count++;
 
-		if (boss_key_count == 1) {
+		if (boss_key_count == 1) { 
 			clear_terminal();
 			draw_boss_key();
 
